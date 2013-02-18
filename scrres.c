@@ -3,6 +3,8 @@
 #include "stdio.h"
 #include "tchar.h"
 
+#define IS_NUMBER(x) x >= 48 && x <= 57
+
 typedef struct
 {
 	LPCTSTR screenName;
@@ -68,6 +70,12 @@ int changeResolution(int displayNumber, int width, int height)
 	DISPLAY_DEVICE DisplayDevice;
 	LPCTSTR displayName;
 	int result;
+	
+	if (width == 0 || height == 0)
+	{
+		printf("Not gonna do this...\n");
+		return 1;
+	}
 
 	printf("Changing resolution of display %d to %dx%d...\n", displayNumber, width, height);
 
@@ -96,8 +104,8 @@ int changeResolution(int displayNumber, int width, int height)
 	}
 
 	initDevMode(&DevMode);
-	if (!EnumDisplaySettings(displayName, ENUM_REGISTRY_SETTINGS, &DevMode) )
-	{
+	if (!EnumDisplaySettings(displayName, ENUM_CURRENT_SETTINGS, &DevMode) ) 
+	{ 
 		printf("ERROR: Couldn't retrieve the selected display's current settings");
 	}
 
@@ -110,7 +118,7 @@ int changeResolution(int displayNumber, int width, int height)
 	result = ChangeDisplaySettingsEx(displayName,
 						   &DevMode,
 						   NULL,
-						   CDS_UPDATEREGISTRY, //CDS_UPDATEREGISTRY | CDS_NORESET,
+						   0,
 						   NULL);
 
 	if (result != DISP_CHANGE_SUCCESSFUL)
@@ -124,17 +132,37 @@ int changeResolution(int displayNumber, int width, int height)
 	return 0; // Everything okay.
 }
 
+// Returns 1 if okay, else 0
+int validateArguments(int argc, char** argv)
+{
+	int i;
+	char* c;
+
+	if (argc != 4)
+		return 0;
+	
+	for (i = 1; i < 4; i++) // for every parameter
+		for (c = argv[i]; *c != 0; c++) // for every character
+			if (IS_NUMBER(*c) == 0)
+				return 0;
+
+	return 1;
+}
+
 int main(int argc, char** argv)
 {
-	if (argc != 4)
+	//printf(validateArguments(argc, argv) ? "si\n" : "no\n");
+	//return;
+
+	if (!validateArguments(argc, argv))
 	{
-		printf("Available displays:\n\n");
+		printf("scrres\n");
+		printf("Usage: scrres displayNumber width height\n");
+		printf("Example: scrres 1 640 480\n\n");
+		printf("The available displays and their display numbers are the following:\n\n");
 		printScreenList();
-	}
-	else
-	{
-		return changeResolution(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+		return 0;
 	}
 
-	return 0;
+	return changeResolution(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
 }
