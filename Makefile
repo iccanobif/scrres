@@ -1,5 +1,5 @@
 scrres.exe: scrres.c
-	gcc scrres.c -o scrres.exe
+	cl scrres.c user32.lib
 
 clean:
 	rm scrres.exe

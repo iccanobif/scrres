@@ -2,6 +2,7 @@
 #include "winuser.h"
 #include "stdio.h"
 #include "tchar.h"
+#include "string.h"
 
 #define IS_NUMBER(x) x >= 48 && x <= 57
 
@@ -138,6 +139,11 @@ int validateArguments(int argc, char** argv)
 	int i;
 	char* c;
 
+	if (argc == 3)
+	{
+		return strcmp(argv[2], "fullhd") == 0 ? 1 : 0;
+	}
+
 	if (argc != 4)
 		return 0;
 	
@@ -158,11 +164,16 @@ int main(int argc, char** argv)
 	{
 		printf("scrres\n");
 		printf("Usage: scrres displayNumber width height\n");
-		printf("Example: scrres 1 640 480\n\n");
+		printf("  Example: scrres 1 640 480\n\n");
+		printf("To set the resolution to 1920x1080 you can also use this shortcut:\n  Example: scrres 1 fullhd\n\n");
 		printf("The available displays and their display numbers are the following:\n\n");
 		printScreenList();
 		return 0;
 	}
 
-	return changeResolution(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+	if (strcmp(argv[2], "fullhd"))
+		return changeResolution(atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+	else
+		return changeResolution(atoi(argv[1]), 1920, 1080);
+		
 }
