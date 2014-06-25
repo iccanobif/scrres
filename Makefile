@@ -3,3 +3,4 @@ scrres.exe: scrres.c
 
 clean:
 	rm scrres.exe
+	rm *.obj
