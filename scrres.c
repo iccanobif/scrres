@@ -100,14 +100,14 @@ int changeResolution(int displayNumber, int width, int height)
 
 	if ((DisplayDevice.StateFlags & DISPLAY_DEVICE_ATTACHED_TO_DESKTOP) == 0)
 	{
-		printf("ERROR: The selected display isn't attached to the desktop (Maybe it's not a monitor?\n");
+		printf("ERROR: The selected display isn't attached to the desktop (Maybe it's not a monitor?).\n");
 		return 1;
 	}
 
 	initDevMode(&DevMode);
 	if (!EnumDisplaySettings(displayName, ENUM_CURRENT_SETTINGS, &DevMode) ) 
 	{ 
-		printf("ERROR: Couldn't retrieve the selected display's current settings");
+		printf("ERROR: Couldn't retrieve the selected display's current settings.");
 	}
 
 	printf("Current resolution: %dx%d\n", DevMode.dmPelsWidth, DevMode.dmPelsHeight);
